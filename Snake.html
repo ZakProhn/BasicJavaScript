@@ -1,0 +1,129 @@
+<html>
+
+<canvas id = "game" width = "600" height = "600"></canvas>
+
+<script>
+var canvas;
+var content;
+var snakeX;
+var snakeY;
+var gameOver = false;
+window.onload= function(){
+	canvas = document.getElementById('game');
+	content = canvas.getContext('2d');
+	document.addEventListener('keydown',keyPush);
+	document.addEventListener('keydown',
+			function(evt){
+				if(gameOver){
+					gameOver = false;
+					score = 0;
+					x = y = 40
+					appleX = appleY = 300;
+					xv = 20; 
+					yv = 0; 
+					tail = 5;
+				}
+			});
+	setInterval(game,1000/15);
+}
+var x = 40
+var y = 40
+var appleX = 300;
+var appleY = 300;
+var gs = tc = 30;
+var xv = 20;
+var yv = 0;
+var score = 0;
+var trail = [];
+var tail = 5;
+var buffer = false;
+function game(){
+	if(gameOver){
+	content.fillStyle = 'black';
+	content.fillRect(0,0,canvas.width,canvas.height);
+	content.fillStyle = 'white';
+	content.font="60px Verdana";
+	content.fillText("Game Over", 150, 100);
+	content.fillText(score,250,200);
+	content.fillText("Press any key", 100, 300);
+	}else{
+	//creates black background sreen
+	content.fillStyle = 'black';
+	content.fillRect(0,0,canvas.width,canvas.height)
+	content.fillText(score,0,0);
+	buffer = false;
+	player();
+	fruit();
+	}
+}
+//creates a player which is a snake with a tail that gets bigger
+function player(){
+	for(var i = 0; i < trail.length;i++){
+		content.fillStyle = 'red';
+		content.fillRect(trail[i].x,trail[i].y,20,20);
+			if(trail[i].x == x && trail[i].y == y){
+			gameOver = true;
+			tail = 0;
+		}
+	}
+	trail.push({x:x,y:y});
+	while(trail.length>tail){
+		trail.shift();
+	}
+	x+=xv;
+	y+=yv;
+	if(x <= -19||x > canvas.width||y <= -19||y > canvas.height){
+	gameOver = true
+	}
+}
+//randomly spawns fruit to collect
+function fruit(){
+	content.fillStyle = 'yellow';
+	content.fillRect(appleX,appleY,20,20);
+	if(fruitCollected()){
+	spawnFruit();
+	score++;
+	tail++;
+	}
+
+}
+function spawnFruit(){
+	appleX = random(1,29) * 20;
+	appleY = random(1,29) * 20;
+
+}
+function fruitCollected(){
+	return appleX == x && appleY == y;
+}
+function random(min, max) {
+  min = Math.ceil(min);
+  max = Math.floor(max);
+  return Math.floor(Math.random() * (max - min)) + min;
+}
+function keyPush(evt){
+	switch(evt.keyCode){
+		case 37:
+			if(xv != 20){
+			xv=-20;yv=0;
+			}
+			break;
+		case 38:
+			if(yv != 20){
+			xv=0;yv=-20;
+			}
+			break;
+		case 39:
+			if(xv != -20){
+			xv=20;yv=0;
+			}
+			break;
+		case 40:
+			if(yv != -20){
+			xv=0;yv=20;
+			}
+			break;
+	
+	}
+}
+</script>
+</html>
